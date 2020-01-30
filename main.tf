@@ -11,14 +11,12 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
-resource "random_string" "sa-random-string" {
-  length  = 16
-  upper   = false
-  special = false
+resource "random_id" "storage_account" {
+  byte_length  = 8
 }
 
 resource "azurerm_storage_account" "sa" {
-  name                      = "random_string.sa_random_string.resultsa"
+  name                      = random_id.storage_account.hex
   resource_group_name       = azurerm_resource_group.rg.name
   location                  = azurerm_resource_group.rg.location
   account_kind              = "StorageV2"
