@@ -11,8 +11,10 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
+resource "random_uuid" "sa-uuid" {}
+
 resource "azurerm_storage_account" "sa" {
-  name                      = "terraform-sa"
+  name                      = "${random_uuid.sa-uuid.result}-sa"
   resource_group_name       = "${azurerm_resource_group.rg.name}"
   location                  = "${azurerm_resource_group.rg.location}"
   account_kind              = "StorageV2"
