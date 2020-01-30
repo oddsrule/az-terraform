@@ -4,7 +4,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "terraform-rg"
-  location = "West US 2"
+  location = "westus2"
 
   tags = {
     environment = "dev"

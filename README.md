@@ -5,3 +5,4 @@ Getting used to terraform, will be writing code that originated as az cli comman
 
 Registering provider with the version parameter works - baby steps
 
+Resource group create works - like I said this is learning to crawl
