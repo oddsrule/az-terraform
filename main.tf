@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version         = "1.38.0"
+  version = "1.38.0"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -11,15 +11,17 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
-resource "random_uuid" "sa-uuid" {}
+resource "random_uuid" "sa-uuid" {
+}
 
 resource "azurerm_storage_account" "sa" {
   name                      = "${random_uuid.sa-uuid.result}sa"
-  resource_group_name       = "${azurerm_resource_group.rg.name}"
-  location                  = "${azurerm_resource_group.rg.location}"
+  resource_group_name       = azurerm_resource_group.rg.name
+  location                  = azurerm_resource_group.rg.location
   account_kind              = "StorageV2"
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   enable_https_traffic_only = true
-  tags                      = "${azurerm_resource_group.rg.tags}"
+  tags                      = azurerm_resource_group.rg.tags
 }
+
