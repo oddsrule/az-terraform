@@ -13,5 +13,5 @@ Hoping to remember to use the tags for cool stuff later on.
 Review this link at some point to see if there's value - still want a good assistant for VSCode and terraform
 https://docs.microsoft.com/en-us/azure/terraform/terraform-vscode-extension
 
-Storage accounts must be unique! adding code for that
+using random_string for SA name seed
 
