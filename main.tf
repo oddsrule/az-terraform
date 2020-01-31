@@ -2,6 +2,18 @@ provider "azurerm" {
   version = "1.38.0"
 }
 
+variable "bastion" {
+  type    = string
+  default = "bst"
+}
+
+variable "virtualNetwork1" {
+  type    = string
+  default = "vnet01"
+}
+
+
+
 resource "azurerm_resource_group" "rg" {
   name     = "terraform-rg"
   location = "westus2"
@@ -27,13 +39,13 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_virtual_network" "vnet" {
-  name                      = azurerm_resource_group.rg.name-vnet01
+  name                      = concat(azurerm_resource_group.rg.name, var.virtualNetwork1)
   location                  = azurerm_resource_group.rg.location
   resource_group_name       = azurerm_resource_group.rg.name
   address_space             = ["10.0.0.0/16"]
 
   subnet {
-    name           = azurerm_resource_group.rg.name-bst-snet
+    name           = concat(azurerm_resource_group.rg.name, var.bastion)
     address_prefix = "10.0.1.0/24"
   }
 }
