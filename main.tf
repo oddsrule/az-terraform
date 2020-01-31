@@ -7,12 +7,24 @@ variable "bastion" {
   default = "bst"
 }
 
+variable "dmz" {
+  type    = string
+  default = "dmz"
+}
+
+variable "web" {
+  type    = string
+  default = "web"
+}
+
+variable "db" {
+  type    = string
+  default = "db"
+}
 variable "virtualNetwork1" {
   type    = string
   default = "vnet01"
 }
-
-
 
 resource "azurerm_resource_group" "rg" {
   name     = "terraform-rg"
@@ -47,5 +59,20 @@ resource "azurerm_virtual_network" "vnet" {
   subnet {
     name           = join("-", [azurerm_resource_group.rg.name, var.bastion, "snet"])
     address_prefix = "10.0.1.0/24"
+  }
+
+  subnet {
+    name           = join("-", [azurerm_resource_group.rg.name, var.dmz, "snet"])
+    address_prefix = "10.0.2.0/24"
+  }
+
+  subnet {
+    name           = join("-", [azurerm_resource_group.rg.name, var.web, "snet"])
+    address_prefix = "10.0.3.0/24"
+  }
+
+  subnet {
+    name           = join("-", [azurerm_resource_group.rg.name, var.db, "snet"])
+    address_prefix = "10.0.4.0/24"
   }
 }

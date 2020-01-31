@@ -21,3 +21,5 @@ SA account has been created - and tag inheritance works as I hoped just by pulli
 
 vnet and 1 subnet added after about 20 commits - could not figure out the function to merge/concat/join strings - finally found that JOIN is what is needed
 two examples in the file so far
+
+note - readup on md formatting sometime
