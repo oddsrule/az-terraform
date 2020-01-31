@@ -23,3 +23,5 @@ vnet and 1 subnet added after about 20 commits - could not figure out the functi
 two examples in the file so far
 
 note - readup on md formatting sometime
+
+network/subnets good - on to some NSGs
