@@ -128,3 +128,45 @@ resource "azurerm_network_security_rule" "bastioninternet" {
   destination_port_range                     = "22"
   destination_application_security_group_ids = [azurerm_application_security_group.asgbst.id]
 }
+
+resource "azurerm_network_interface" "bastionnic" {
+  name
+  resource_group_name
+  location
+  tags
+}
+
+resource "azurerm_virtual_machine" "bastion" {
+  name                          = join("-", azurerm_resource_group.rg, var.bastion)
+  location                      = azurerm_resource_group.rg.location
+  resource_group_name           = azurerm_resource_group.rg.name
+  network_interface_ids         = azurerm_network_interface.bastionnic.id
+  vm_size                       = "Standard_B1ls"
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+  }
+
+  storage_os_disk {
+    name          = "myOsDisk"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name "bastion"
+    admin_username "sysadmin"
+    admin_password "Passw0rd1234!"
+  }
+
+  os_profile_linux_config {
+    ssh_keys {
+      key_data = file("/home/kirk/.ssh/id_rsa.pub")
+    }
+    disable_password_authentication = true
+  }  
+  delete_os_disk_on_termination = true
+  
+  tags = azurerm_resource_group.rg.tags
+}

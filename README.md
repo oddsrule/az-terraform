@@ -29,3 +29,4 @@ network/subnets good - on to some NSGs
 subnets cannot be tagged - nsg looks good now
 
 ASGs in place but no rules exist - adding now
+fixed up the ASG
