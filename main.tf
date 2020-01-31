@@ -125,5 +125,5 @@ resource "azurerm_network_security_rule" "bastioninternet" {
   description                                = "Allow ssh from shaw to bastion subnet"
   source_address_prefix                      = "68.144.176.0/24"
   destination_port_range                     = 22
-  destination_application_security_group_ids = azurerm_application_security_group.asgbst
+  destination_application_security_group_ids = azurerm_application_security_group.asgbst.id
 }
