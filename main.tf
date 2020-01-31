@@ -36,4 +36,4 @@ resource "azurerm_storage_account" "sa" {
 #    name           = azurerm_resource_group.rg.name-bst-snet
 #    address_prefix = "10.0.1.0/24"
 #  }
-}
+#}
