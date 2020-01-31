@@ -130,7 +130,7 @@ resource "azurerm_network_security_rule" "bastioninternet" {
 }
 
 resource "azurerm_network_interface" "bastionnic" {
-  name                = join("-", var.bastion, "-nic")
+  name                = join("-", [var.bastion, "-nic"])
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = azurerm_resource_group.rg.tags
