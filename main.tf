@@ -137,7 +137,7 @@ resource "azurerm_network_interface" "bastionnic" {
 
   ip_configuration {
     name                          = "whatstringisthis"
-    subnet_id                     = azurerm_virtual_network.subnet.bastion.name
+    subnet_id                     = azurerm_virtual_network.vnet.subnet.bastion
     private_ip_address_allocation = "Dynamic"
   }
 }
