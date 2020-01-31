@@ -112,3 +112,15 @@ resource "azurerm_application_security_group" "asgdb" {
   tags                = azurerm_resource_group.rg.tags
 }
 
+resource "azurerm_network_security_rule" "bastioninternet" {
+  name                        = "bastion-inbound-ssh"
+  resource_group_name         = azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+  protocol                    = "Tcp"
+  access                      = "Allow"
+  direction                   = "Inbound"
+  priority                    = 100
+  description                 = "Allow ssh from shaw to bastion subnet"
+  source_address_prefix       = "68.144.176.0/24"
+  destination_application_security_group_ids = azurerm_application_security_group.asgbst.id
+}
