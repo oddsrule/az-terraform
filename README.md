@@ -25,3 +25,5 @@ two examples in the file so far
 note - readup on md formatting sometime
 
 network/subnets good - on to some NSGs
+
+subnets cannot be tagged - nsg looks good now

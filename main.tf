@@ -83,3 +83,10 @@ resource "azurerm_network_security_group" "nsg" {
   resource_group_name = azurerm_resource_group.rg.name
   tags                = azurerm_resource_group.rg.tags
 }
+
+resource "azurerm_application_security_group" "asgbst" {
+  name                = join("-", [azurerm_network_security_group.nsg.name, var.bastion])
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = azurerm_resource_group.rg.tags
+}
