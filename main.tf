@@ -35,6 +35,22 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
+resource "azurerm_key_vault" "terraform-kv" {
+  name                        = "kjkvazure76876"
+  location                    = azurerm_resource_group.rg.location
+  resource_group_name         = azurerm_resource_group.rg.name
+  enabled_for_disk_encryption = false
+  tenant_id                   = "6f41529f-662d-4409-9a0d-23208f94d525"
+
+  sku_name = "stadard"
+
+  access_policy {
+    enabled_for_deployment = true
+  }
+
+  tags = azurerm_resource_group.rg.tags
+}
+
 resource "random_id" "storage_account" {
   byte_length  = 8
 }
