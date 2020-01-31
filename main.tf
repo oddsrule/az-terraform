@@ -130,10 +130,16 @@ resource "azurerm_network_security_rule" "bastioninternet" {
 }
 
 resource "azurerm_network_interface" "bastionnic" {
-  name
-  resource_group_name
-  location
-  tags
+  name                = join("-", var.bastion, "-nic")
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = azurerm_resource_group.rg.tags
+
+  ip_configuration {
+    name                          = "whatstringisthis"
+    subnet_id                     = azurerm_virtual_network.subnet.bastion.name
+    private_ip_address_allocation = "Dynamic"
+  }
 }
 
 resource "azurerm_virtual_machine" "bastion" {
