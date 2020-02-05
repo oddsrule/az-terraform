@@ -184,7 +184,7 @@ resource "azurerm_network_security_rule" "bastioninternet" {
 }
 
 resource "azurerm_public_ip" "bastionpublicip" {
-  name                = bastionpublicip
+  name                = "bastionpublicip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
