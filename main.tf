@@ -188,7 +188,7 @@ resource "azurerm_network_interface" "bastionnic" {
 }
 
 resource "azurerm_virtual_machine" "bastion" {
-  name                             = join("-", [azurerm_resource_group.rg, var.bastion])
+  name                             = join("-", [azurerm_resource_group.rg.name, var.bastion])
   location                         = azurerm_resource_group.rg.location
   resource_group_name              = azurerm_resource_group.rg.name
   network_interface_ids            = [azurerm_network_interface.bastionnic.id]
