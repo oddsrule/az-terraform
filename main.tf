@@ -52,7 +52,7 @@ resource "azurerm_key_vault" "terraform-kv" {
   enabled_for_disk_encryption = false
   tenant_id                   = var.tenantId
 
-  sku_name = "stadard"
+  sku_name = "standard"
 
   access_policy {
     tenant_id = var.tenantId
