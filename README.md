@@ -30,3 +30,11 @@ subnets cannot be tagged - nsg looks good now
 
 ASGs in place but no rules exist - adding now
 fixed up the ASG
+
+bastion access works - ssh to public IP with password
+next steps:
+ssh keys pulling from keyvault in place of passwords
+data disks
+vm extensions to bootstrap
+
+when brain works better look at parameterizing everything to try and make naming convention as code????
