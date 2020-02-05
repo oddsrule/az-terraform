@@ -229,3 +229,144 @@ resource "azurerm_virtual_machine" "bastion" {
   
   tags = azurerm_resource_group.rg.tags
 }
+
+resource "azurerm_network_interface" "dmznic" {
+  name                = join("-", [var.dmz, "-nic"])
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = azurerm_resource_group.rg.tags
+
+  ip_configuration {
+    name                          = "ipconfig-1"
+    subnet_id                     = azurerm_subnet.dmz.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_virtual_machine" "dmz" {
+  name                             = join("-", [azurerm_resource_group.rg.name, var.dmz])
+  location                         = azurerm_resource_group.rg.location
+  resource_group_name              = azurerm_resource_group.rg.name
+  network_interface_ids            = [azurerm_network_interface.dmz.id]
+  vm_size                          = "Standard_B1ls"
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7.7"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name          = "myOsDisk"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name   = "dmz"
+    admin_username  = "sysadmin"
+    admin_password  = "Passw0rd1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }  
+  
+  tags = azurerm_resource_group.rg.tags
+}
+
+resource "azurerm_network_interface" "webnic" {
+  name                = join("-", [var.web, "-nic"])
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = azurerm_resource_group.rg.tags
+
+  ip_configuration {
+    name                          = "ipconfig-1"
+    subnet_id                     = azurerm_subnet.web.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_virtual_machine" "web" {
+  name                             = join("-", [azurerm_resource_group.rg.name, var.web])
+  location                         = azurerm_resource_group.rg.location
+  resource_group_name              = azurerm_resource_group.rg.name
+  network_interface_ids            = [azurerm_network_interface.webnic.id]
+  vm_size                          = "Standard_B1ls"
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7.7"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name          = "myOsDisk"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name   = "web"
+    admin_username  = "sysadmin"
+    admin_password  = "Passw0rd1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }  
+  
+  tags = azurerm_resource_group.rg.tags
+}
+
+resource "azurerm_network_interface" "dbnic" {
+  name                = join("-", [var.db, "-nic"])
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = azurerm_resource_group.rg.tags
+
+  ip_configuration {
+    name                          = "ipconfig-1"
+    subnet_id                     = azurerm_subnet.db.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_virtual_machine" "db" {
+  name                             = join("-", [azurerm_resource_group.rg.name, var.db])
+  location                         = azurerm_resource_group.rg.location
+  resource_group_name              = azurerm_resource_group.rg.name
+  network_interface_ids            = [azurerm_network_interface.dbnic.id]
+  vm_size                          = "Standard_B1ls"
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7.7"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name          = "myOsDisk"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name   = "db"
+    admin_username  = "sysadmin"
+    admin_password  = "Passw0rd1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }  
+  
+  tags = azurerm_resource_group.rg.tags
+}
