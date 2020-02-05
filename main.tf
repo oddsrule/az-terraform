@@ -177,10 +177,17 @@ resource "azurerm_network_security_rule" "bastioninternet" {
 
   priority                                   = 100
   description                                = "Allow ssh from shaw to bastion subnet"
-  source_address_prefix                      = "68.144.176.0/24"
+  source_address_prefix                      = "184.75.215.242/32"
   source_port_range                          = "*"
   destination_port_range                     = "22"
   destination_application_security_group_ids = [azurerm_application_security_group.asgbst.id]
+}
+
+resource "azurerm_public_ip" "bastionpublicip" {
+  name                = bastionpublicip
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
 }
 
 resource "azurerm_network_interface" "bastionnic" {
@@ -193,6 +200,7 @@ resource "azurerm_network_interface" "bastionnic" {
     name                          = "ipconfig-1"
     subnet_id                     = azurerm_subnet.bastion.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.bastionpublicip.id
   }
 }
 
