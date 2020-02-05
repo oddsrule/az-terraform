@@ -1,6 +1,9 @@
 # Local .terraform directories
 **/.terraform/*
 
+# backup dir - I don't trust git yet
+my-orig
+
 # .tfstate files
 *.tfstate
 *.tfstate.*

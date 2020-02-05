@@ -26,6 +26,16 @@ variable "virtualNetwork1" {
   default = "vnet01"
 }
 
+variable "tenantId" {
+  type    = string
+  default = "6f41529f-662d-4409-9a0d-23208f94d525"
+}
+
+variable "objectId" {
+  type    = string
+  default = "05e80a1f-fcc8-4c53-9905-4e7f72a1cef8"
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = "terraform-rg"
   location = "westus2"
@@ -40,13 +50,32 @@ resource "azurerm_key_vault" "terraform-kv" {
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = false
-  tenant_id                   = "6f41529f-662d-4409-9a0d-23208f94d525"
+  tenant_id                   = var.tenant_id
 
   sku_name = "stadard"
 
   access_policy {
-    enabled_for_deployment = true
+    tenant_id = var.tenantId
+    object_id = var.objectId
+
+    key_permissions = [
+      "get",
+    ]
+
+    secret_permissions = [
+      "get",
+    ]
+
+    storage_permissions = [
+      "get",
+    ]
   }
+
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+  }
+  enabled_for_deployment = true
 
   tags = azurerm_resource_group.rg.tags
 }
@@ -152,23 +181,26 @@ resource "azurerm_network_interface" "bastionnic" {
   tags                = azurerm_resource_group.rg.tags
 
   ip_configuration {
-    name                          = "whatstringisthis"
+    name                          = "ipconfig-1"
     subnet_id                     = azurerm_application_security_group.asgbst.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
 resource "azurerm_virtual_machine" "bastion" {
-  name                          = join("-", [azurerm_resource_group.rg, var.bastion])
-  location                      = azurerm_resource_group.rg.location
-  resource_group_name           = azurerm_resource_group.rg.name
-  network_interface_ids         = azurerm_network_interface.bastionnic.id
-  vm_size                       = "Standard_B1ls"
+  name                             = join("-", [azurerm_resource_group.rg, var.bastion])
+  location                         = azurerm_resource_group.rg.location
+  resource_group_name              = azurerm_resource_group.rg.name
+  network_interface_ids            = azurerm_network_interface.bastionnic.id
+  vm_size                          = "Standard_B1ls"
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7.7"
+    version   = "latest"
   }
 
   storage_os_disk {
@@ -183,12 +215,8 @@ resource "azurerm_virtual_machine" "bastion" {
   }
 
   os_profile_linux_config {
-    ssh_keys {
-      key_data = file("/home/kirk/.ssh/id_rsa.pub")
-    }
     disable_password_authentication = true
   }  
-  delete_os_disk_on_termination = true
   
   tags = azurerm_resource_group.rg.tags
 }
