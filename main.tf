@@ -213,7 +213,7 @@ resource "azurerm_virtual_machine" "bastion" {
   }
 
   storage_os_disk {
-    name          = "myOsDisk"
+    name          = "bastionOsDisk"
     create_option = "FromImage"
   }
 
@@ -260,7 +260,7 @@ resource "azurerm_virtual_machine" "dmz" {
   }
 
   storage_os_disk {
-    name          = "myOsDisk"
+    name          = "dmzOsDisk"
     create_option = "FromImage"
   }
 
@@ -307,7 +307,7 @@ resource "azurerm_virtual_machine" "web" {
   }
 
   storage_os_disk {
-    name          = "myOsDisk"
+    name          = "webOsDisk"
     create_option = "FromImage"
   }
 
@@ -354,7 +354,7 @@ resource "azurerm_virtual_machine" "db" {
   }
 
   storage_os_disk {
-    name          = "myOsDisk"
+    name          = "dbOsDisk"
     create_option = "FromImage"
   }
 
