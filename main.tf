@@ -182,7 +182,7 @@ resource "azurerm_network_interface" "bastionnic" {
 
   ip_configuration {
     name                          = "ipconfig-1"
-    subnet_id                     = azurerm_application_security_group.asgbst.id
+    subnet_id                     = azurerm_virtual_network.vnet.subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }
