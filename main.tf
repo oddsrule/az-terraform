@@ -50,7 +50,7 @@ resource "azurerm_key_vault" "terraform-kv" {
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = false
-  tenant_id                   = var.tenant_id
+  tenant_id                   = var.tenantId
 
   sku_name = "stadard"
 
