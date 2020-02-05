@@ -101,25 +101,30 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name       = azurerm_resource_group.rg.name
   address_space             = ["10.0.0.0/16"]
   tags                      = azurerm_resource_group.rg.tags
-  subnet {
-    name           = join("-", [azurerm_resource_group.rg.name, var.bastion, "snet"])
-    address_prefix = "10.0.1.0/24"
-  }
+}
 
-  subnet {
-    name           = join("-", [azurerm_resource_group.rg.name, var.dmz, "snet"])
-    address_prefix = "10.0.2.0/24"
-  }
+resource "azurerm_subnet" "bastion" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "BastionSubnet"
+  address_prefix       = "10.0.1.0/24"
+}
 
-  subnet {
-    name           = join("-", [azurerm_resource_group.rg.name, var.web, "snet"])
-    address_prefix = "10.0.3.0/24"
-  }
+resource "azurerm_subnet" "dmz" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "DMZSubnet"
+  address_prefix       = "10.0.2.0/24"
+}
 
-  subnet {
-    name           = join("-", [azurerm_resource_group.rg.name, var.db, "snet"])
-    address_prefix = "10.0.4.0/24"
-  }
+resource "azurerm_subnet" "web" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "WebSubnet"
+  address_prefix       = "10.0.3.0/24"
+}
+
+resource "azurerm_subnet" "db" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "DBSubnet"
+  address_prefix       = "10.0.4.0/24"
 }
 
 resource "azurerm_network_security_group" "nsg" {
@@ -182,7 +187,7 @@ resource "azurerm_network_interface" "bastionnic" {
 
   ip_configuration {
     name                          = "ipconfig-1"
-    subnet_id                     = azurerm_virtual_network.vnet.subnet.id
+    subnet_id                     = azurerm_subnet.bastion.id
     private_ip_address_allocation = "Dynamic"
   }
 }
