@@ -202,6 +202,15 @@ resource "azurerm_public_ip" "bastionpublicip" {
   allocation_method   = "Dynamic"
 }
 
+data "azurerm_public_ip" "bastionpublicip" {
+  name                = azurerm_public_ip.bastionpublicip.name
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+output "bastion_public_ip_address" {
+  value = data.azurerm_public_ip.bastionpublicip.ip_address
+}
+
 resource "azurerm_network_interface" "bastionnic" {
   name                = join("-", [var.bastion, "-nic"])
   resource_group_name = azurerm_resource_group.rg.name
