@@ -34,6 +34,7 @@ fixed up the ASG
 bastion access works - ssh to public IP with password
 next steps:
 ssh keys pulling from keyvault in place of passwords
+outputs
 data disks
 vm extensions to bootstrap
 

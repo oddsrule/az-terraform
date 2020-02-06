@@ -2,6 +2,8 @@ provider "azurerm" {
   version = "1.38.0"
 }
 
+data "azurerm_client_config" "current"{}
+
 variable "bastion" {
   type    = string
   default = "bst"
@@ -50,24 +52,34 @@ resource "azurerm_key_vault" "terraform-kv" {
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = false
-  tenant_id                   = var.tenantId
-
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  
   sku_name = "standard"
 
   access_policy {
-    tenant_id = var.tenantId
-    object_id = var.objectId
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.service_principal_object_id
+
+    certificate_permissions = [
+      "get",
+      "list",
+    ]
 
     key_permissions = [
       "get",
+      "create",
+      "list",
     ]
 
     secret_permissions = [
       "get",
+      "list",
+      "set",
     ]
 
     storage_permissions = [
       "get",
+      "list",
     ]
   }
 
@@ -228,11 +240,14 @@ resource "azurerm_virtual_machine" "bastion" {
   os_profile {
     computer_name   = "bastion"
     admin_username  = "sysadmin"
-    admin_password  = "Passw0rd1234!"
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      key_data = file("/home/kirk/.ssh/id_rsa.pub")
+      path     = "/home/sysadmin/.ssh/authorized_keys"
+    }
   }  
   
   tags = azurerm_resource_group.rg.tags
