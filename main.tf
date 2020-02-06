@@ -209,7 +209,7 @@ data "azurerm_public_ip" "bastionpublicip" {
 
 output "bastion_public_ip_address" {
   description = "public IP address of the bastion server is"
-  value       = data.azurerm_public_ip.bastionpublicip.fqdn
+  value       = [data.azurerm_public_ip.bastionpublicip.ip_address]
 }
 
 resource "azurerm_network_interface" "bastionnic" {
