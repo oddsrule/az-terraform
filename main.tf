@@ -58,7 +58,7 @@ resource "azurerm_key_vault" "terraform-kv" {
 
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.service_principal_object_id
+    object_id = var.objectId
 
     certificate_permissions = [
       "get",
