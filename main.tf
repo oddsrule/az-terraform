@@ -15,7 +15,7 @@ resource "random_string" "passphrase" {
 
 # Local resource call to generate ssh key
 resource "null_resource" "bastionkg" {
-  provisioner = "local-exec" {
+  provisioner "local-exec" {
     command = "ssh-keygen -f ${var.file-path}${azurerm_virtual_machine.bastion.name} -t rsa -b 4096 -N ${random_string.passphrase.result}"
   }
 }
