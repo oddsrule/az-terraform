@@ -35,3 +35,8 @@ variable "file-path" {
   type    = string
   default = "~/.keys"
 }
+
+variable "prefix" {
+  type    = string
+  default = "bastion"
+}

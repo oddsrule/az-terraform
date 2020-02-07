@@ -16,7 +16,7 @@ resource "random_string" "passphrase" {
 # Local resource call to generate ssh key
 resource "null_resource" "bastionkg" {
   provisioner "local-exec" {
-    command = "ssh-keygen -f ${var.file-path}${azurerm_virtual_machine.bastion.name} -t rsa -b 4096 -N ${random_string.passphrase.result}"
+    command = "ssh-keygen -f ${var.file-path}${var.prefix} -t rsa -b 4096 -N ${random_string.passphrase.result}"
   }
 }
 
@@ -24,7 +24,7 @@ resource "null_resource" "bastionkg" {
 data "local_file" "sshpk" {
     # private key
     depends_on = [null_resource.bastionkg]
-    filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}"
+    filename = "${var.file-path}${var.prefix}"
 }
 
 data "local_file" "sshpub" {
