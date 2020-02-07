@@ -23,13 +23,13 @@ resource "null_resource" "bastionkg" {
 # get the ssh key generated above
 data "local_file" "sshpk" {
     # private key
-    depends_on = [null_resource.sshkg]
+    depends_on = [null_resource.bastionkg]
     filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}"
 }
 
 data "local_file" "sshpub" {
     # public key
-    depends_on = [null_resource.sshkg]
+    depends_on = [null_resource.bastionkg]
     filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}.pub"
 }
 
