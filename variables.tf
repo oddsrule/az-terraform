@@ -23,12 +23,10 @@ variable "region" {
 
 variable "tenantId" {
   type    = string
-  default = "6f41529f-662d-4409-9a0d-23208f94d525"
 }
 
 variable "objectId" {
   type    = string
-  default = "05e80a1f-fcc8-4c53-9905-4e7f72a1cef8"
 }
 
 variable "file-path" {
