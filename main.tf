@@ -122,119 +122,120 @@ resource "azurerm_network_security_group" "nsg" {
   tags                = azurerm_resource_group.rg.tags
 }
 
-#resource "azurerm_application_security_group" "asgbst" {
-#  name                = join("-", [azurerm_network_security_group.nsg.name, var.bastion])
-#  location            = azurerm_resource_group.rg.location
-#  resource_group_name = azurerm_resource_group.rg.name
-#  tags                = azurerm_resource_group.rg.tags
-#}
-#
-#resource "azurerm_application_security_group" "asgdmz" {
-#  name                = join("-", [azurerm_network_security_group.nsg.name, var.dmz])
-#  location            = azurerm_resource_group.rg.location
-#  resource_group_name = azurerm_resource_group.rg.name
-#  tags                = azurerm_resource_group.rg.tags
-#}
-#
-#resource "azurerm_application_security_group" "asgweb" {
-#  name                = join("-", [azurerm_network_security_group.nsg.name, var.web])
-#  location            = azurerm_resource_group.rg.location
-#  resource_group_name = azurerm_resource_group.rg.name
-#  tags                = azurerm_resource_group.rg.tags
-#}
-#
-#resource "azurerm_application_security_group" "asgdb" {
-#  name                = join("-", [azurerm_network_security_group.nsg.name, var.db])
-#  location            = azurerm_resource_group.rg.location
-#  resource_group_name = azurerm_resource_group.rg.name
-#  tags                = azurerm_resource_group.rg.tags
-#}
-#
-#resource "azurerm_network_security_rule" "bastioninternet" {
-#  name                                       = "bastion-inbound-ssh"
-#  resource_group_name                        = azurerm_resource_group.rg.name
-#  network_security_group_name                = azurerm_network_security_group.nsg.name
-#
-#  protocol                                   = "Tcp"
-#  access                                     = "Allow"
-#  direction                                  = "Inbound"
-#
-#  priority                                   = 100
-#  description                                = "Allow ssh from shaw to bastion subnet"
-#  source_address_prefix                      = "184.75.215.242/32"
-#  source_port_range                          = "*"
-#  destination_port_range                     = "22"
-#  destination_application_security_group_ids = [azurerm_application_security_group.asgbst.id]
-#}
-#
-#resource "azurerm_public_ip" "bastionpublicip" {
-#  name                = "bastionpublicip"
-#  location            = azurerm_resource_group.rg.location
-#  resource_group_name = azurerm_resource_group.rg.name
-#  allocation_method   = "Dynamic"
-#}
-#
-#data "azurerm_public_ip" "bastionpublicip" {
-#  name                = azurerm_public_ip.bastionpublicip.name
-#  resource_group_name = azurerm_resource_group.rg.name
-#}
-#
-#output "bastion_public_ip_address" {
-#  description = "public IP address of the bastion server is"
-#  value       = data.azurerm_public_ip.bastionpublicip.ip_address
-#}
-#
-#resource "azurerm_network_interface" "bastionnic" {
-#  name                = join("-", [var.bastion, "-nic"])
-#  resource_group_name = azurerm_resource_group.rg.name
-#  location            = azurerm_resource_group.rg.location
-#  tags                = azurerm_resource_group.rg.tags
-#
-#  ip_configuration {
-#    name                          = "ipconfig-1"
-#    subnet_id                     = azurerm_subnet.bastion.id
-#    private_ip_address_allocation = "Dynamic"
-#    public_ip_address_id          = azurerm_public_ip.bastionpublicip.id
-#  }
-#}
-#
-#resource "azurerm_virtual_machine" "bastion" {
-#  name                             = join("-", [azurerm_resource_group.rg.name, var.bastion])
-#  location                         = azurerm_resource_group.rg.location
-#  resource_group_name              = azurerm_resource_group.rg.name
-#  network_interface_ids            = [azurerm_network_interface.bastionnic.id]
-#  vm_size                          = "Standard_B1ls"
-#  delete_os_disk_on_termination    = true
-#  delete_data_disks_on_termination = true
-#
-#  storage_image_reference {
-#    publisher = "RedHat"
-#    offer     = "RHEL"
-#    sku       = "7.7"
-#    version   = "latest"
-#  }
-#
-#  storage_os_disk {
-#    name          = "bastionOsDisk"
-#    create_option = "FromImage"
-#  }
-#
-#  os_profile {
-#    computer_name   = "bastion"
-#    admin_username  = "sysadmin"
-#  }
-#
-#  os_profile_linux_config {
-#    disable_password_authentication = true
-#    ssh_keys {
-#      key_data = file("/home/kirk/.ssh/id_rsa.pub")
-#      path     = "/home/sysadmin/.ssh/authorized_keys"
-#    }
-#  }  
-#  
-#  tags = azurerm_resource_group.rg.tags
-#}
-#
+resource "azurerm_application_security_group" "bstasg" {
+  name                = "${azurerm_resource_group.rg.name}-bstasg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = azurerm_resource_group.rg.tags
+}
+
+resource "azurerm_application_security_group" "dmzasg" {
+  name                = "${azurerm_resource_group.rg.name}-dmzasg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = azurerm_resource_group.rg.tags
+}
+
+resource "azurerm_application_security_group" "webasg" {
+  name                = "${azurerm_resource_group.rg.name}-webasg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = azurerm_resource_group.rg.tags
+}
+
+resource "azurerm_application_security_group" "dbaasg" {
+  name                = "${azurerm_resource_group.rg.name}-dbaasg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = azurerm_resource_group.rg.tags
+}
+
+resource "azurerm_network_security_rule" "bastioninternet" {
+  name                                       = "bastion-inbound-ssh"
+  resource_group_name                        = azurerm_resource_group.rg.name
+  network_security_group_name                = azurerm_network_security_group.nsg.name
+
+  protocol                                   = "Tcp"
+  access                                     = "Allow"
+  direction                                  = "Inbound"
+
+  priority                                   = 100
+  description                                = "Allow ssh from shaw to bastion subnet"
+  source_address_prefix                      = "184.75.215.242/32"
+  source_port_range                          = "*"
+  destination_port_range                     = "22"
+  destination_application_security_group_ids = [azurerm_application_security_group.bstasg.id]
+}
+
+resource "azurerm_public_ip" "bastionpublicip" {
+  name                    = "bastionpublicip"
+  location                = azurerm_resource_group.rg.location
+  resource_group_name     = azurerm_resource_group.rg.name
+  allocation_method       = "Dynamic"
+  idle_timeout_in_minutes = 30
+  tags                    = azurerm_resource_group.rg.tags
+}
+
+data "azurerm_public_ip" "bastionpublicip" {
+  name                = azurerm_public_ip.bastionpublicip.name
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "random_id" "bastionnic" {
+  byte_length = 8
+}
+
+resource "azurerm_network_interface" "bastionnic" {
+  name                = random_id.bastionnic.hex
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = azurerm_resource_group.rg.tags
+
+  ip_configuration {
+    name                          = "ipconfig-1"
+    subnet_id                     = azurerm_subnet.bastion.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.bastionpublicip.id
+  }
+
+}
+
+resource "azurerm_virtual_machine" "bastion" {
+  name                             = "dmz${var.landscape}000z"
+  location                         = azurerm_resource_group.rg.location
+  resource_group_name              = azurerm_resource_group.rg.name
+  network_interface_ids            = [azurerm_network_interface.bastionnic.id]
+  vm_size                          = "Standard_B1ls"
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7.7"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name          = "dmz${var.landscape}000zosDisk"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name   = "dmz${var.landscape}000z"
+    admin_username  = "kirk"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+    ssh_keys {
+      key_data = file("/home/kirk/.ssh/id_rsa.pub")
+      path     = "/home/kirk/.ssh/authorized_keys"
+    }
+  }  
+  tags = azurerm_resource_group.rg.tags
+}
+
 #resource "azurerm_network_interface" "dmznic" {
 #  name                = join("-", [var.dmz, "-nic"])
 #  resource_group_name = azurerm_resource_group.rg.name
