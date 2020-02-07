@@ -87,41 +87,41 @@ resource "azurerm_virtual_network" "vnet" {
   tags                      = azurerm_resource_group.rg.tags
 }
 
-#resource "azurerm_subnet" "bastion" {
-#  virtual_network_name = azurerm_virtual_network.vnet.name
-#  name                 = "BastionSubnet"
-#  address_prefix       = "10.0.1.0/24"
-#  resource_group_name  = azurerm_resource_group.rg.name
-#}
-#
-#resource "azurerm_subnet" "dmz" {
-#  virtual_network_name = azurerm_virtual_network.vnet.name
-#  name                 = "DMZSubnet"
-#  address_prefix       = "10.0.2.0/24"
-#  resource_group_name  = azurerm_resource_group.rg.name
-#}
-#
-#resource "azurerm_subnet" "web" {
-#  virtual_network_name = azurerm_virtual_network.vnet.name
-#  name                 = "WebSubnet"
-#  address_prefix       = "10.0.3.0/24"
-#  resource_group_name  = azurerm_resource_group.rg.name
-#}
-#
-#resource "azurerm_subnet" "db" {
-#  virtual_network_name = azurerm_virtual_network.vnet.name
-#  name                 = "DBSubnet"
-#  address_prefix       = "10.0.4.0/24"
-#  resource_group_name  = azurerm_resource_group.rg.name
-#}
-#
-#resource "azurerm_network_security_group" "nsg" {
-#  name                = join("-", [azurerm_virtual_network.vnet.name, "nsg"])
-#  location            = azurerm_resource_group.rg.location
-#  resource_group_name = azurerm_resource_group.rg.name
-#  tags                = azurerm_resource_group.rg.tags
-#}
-#
+resource "azurerm_subnet" "bastion" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}001"
+  address_prefix       = "10.0.1.0/24"
+  resource_group_name  = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "dmz" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}002"
+  address_prefix       = "10.0.2.0/24"
+  resource_group_name  = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "web" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}003"
+  address_prefix       = "10.0.3.0/24"
+  resource_group_name  = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "db" {
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}004"
+  address_prefix       = "10.0.4.0/24"
+  resource_group_name  = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_network_security_group" "nsg" {
+  name                = "${var.appstring}${var.landscape}${var.cloud}nsg${var.region}000"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tags                = azurerm_resource_group.rg.tags
+}
+
 #resource "azurerm_application_security_group" "asgbst" {
 #  name                = join("-", [azurerm_network_security_group.nsg.name, var.bastion])
 #  location            = azurerm_resource_group.rg.location
