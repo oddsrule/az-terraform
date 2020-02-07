@@ -24,7 +24,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_key_vault" "terraform-kv" {
-  name                        = "${azurerm_resource_group.rg.name}-sta"
+  name                        = "${azurerm_resource_group.rg.name}-akv"
   location                    = azurerm_resource_group.rg.location
   resource_group_name         = azurerm_resource_group.rg.name
   enabled_for_disk_encryption = false
@@ -68,25 +68,17 @@ resource "azurerm_key_vault" "terraform-kv" {
   tags = azurerm_resource_group.rg.tags
 }
 
-resource "random_string" "keyvault" {
-  length  = 6
+resource "azurerm_storage_account" "sa" {
+  name                      = "${azurerm_resource_group.rg.name}sta"
+  resource_group_name       = azurerm_resource_group.rg.name
+  location                  = azurerm_resource_group.rg.location
+  account_kind              = "StorageV2"
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  enable_https_traffic_only = true
+  tags                      = azurerm_resource_group.rg.tags
 }
 
-#resource "random_string" "storage_account" {
-#  length  = 8
-#}
-#
-#resource "azurerm_storage_account" "sa" {
-#  name                      = random_id.storage_account.hex
-#  resource_group_name       = azurerm_resource_group.rg.name
-#  location                  = azurerm_resource_group.rg.location
-#  account_kind              = "StorageV2"
-#  account_tier              = "Standard"
-#  account_replication_type  = "LRS"
-#  enable_https_traffic_only = true
-#  tags                      = azurerm_resource_group.rg.tags
-#}
-#
 #resource "azurerm_virtual_network" "vnet" {
 #  name                      = join("-", [azurerm_resource_group.rg.name, var.virtualNetwork1])
 #  location                  = azurerm_resource_group.rg.location
