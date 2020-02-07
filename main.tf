@@ -23,53 +23,57 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
-#resource "azurerm_key_vault" "terraform-kv" {
-#  name                        = "kjkvazure76876"
-#  location                    = azurerm_resource_group.rg.location
-#  resource_group_name         = azurerm_resource_group.rg.name
-#  enabled_for_disk_encryption = false
-#  tenant_id                   = data.azurerm_client_config.current.tenant_id
-#  
-#  sku_name = "standard"
-#
-#  access_policy {
-#    tenant_id = data.azurerm_client_config.current.tenant_id
-#    object_id = var.objectId
-#
-#    certificate_permissions = [
-#      "get",
-#      "list",
-#    ]
-#
-#    key_permissions = [
-#      "get",
-#      "create",
-#      "list",
-#    ]
-#
-#    secret_permissions = [
-#      "get",
-#      "list",
-#      "set",
-#    ]
-#
-#    storage_permissions = [
-#      "get",
-#      "list",
-#    ]
-#  }
-#
-#  network_acls {
-#    default_action = "Deny"
-#    bypass         = "AzureServices"
-#  }
-#  enabled_for_deployment = true
-#
-#  tags = azurerm_resource_group.rg.tags
-#}
-#
-#resource "random_id" "storage_account" {
-#  byte_length  = 8
+resource "azurerm_key_vault" "terraform-kv" {
+  name                        = "${azurerm_resource_group.rg.name}-sta"
+  location                    = azurerm_resource_group.rg.location
+  resource_group_name         = azurerm_resource_group.rg.name
+  enabled_for_disk_encryption = false
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  
+  sku_name = "standard"
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = var.objectId
+
+    certificate_permissions = [
+      "get",
+      "list",
+    ]
+
+    key_permissions = [
+      "get",
+      "create",
+      "list",
+    ]
+
+    secret_permissions = [
+      "get",
+      "list",
+      "set",
+    ]
+
+    storage_permissions = [
+      "get",
+      "list",
+    ]
+  }
+
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+  }
+  enabled_for_deployment = true
+
+  tags = azurerm_resource_group.rg.tags
+}
+
+resource "random_string" "keyvault" {
+  length  = 6
+}
+
+#resource "random_string" "storage_account" {
+#  length  = 8
 #}
 #
 #resource "azurerm_storage_account" "sa" {
