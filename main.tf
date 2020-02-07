@@ -1,17 +1,36 @@
+# Bring in Azure Provider
 provider "azurerm" {
   version = "1.38.0"
 }
 
 data "azurerm_client_config" "current"{}
 
-variable "tenantId" {
-  type    = string
-  default = "6f41529f-662d-4409-9a0d-23208f94d525"
+# random passphrase to use on ssh key
+resource "random_string" "passphrase" {
+  length           = 12
+  special          = true
+  override_special = "!@#$%&*-_=?"
+  number           = true
 }
 
-variable "objectId" {
-  type    = string
-  default = "05e80a1f-fcc8-4c53-9905-4e7f72a1cef8"
+# Local resource call to generate ssh key
+resource "null_resource" "bastionkg" {
+  provisioner = "local-exec" {
+    command = "ssh-keygen -f ${var.file-path}${azurerm_virtual_machine.bastion.name} -t rsa -b 4096 -N ${random_string.passphrase.result}"
+  }
+}
+
+# get the ssh key generated above
+data "local_file" "sshpk" {
+    # private key
+    depends_on = [null_resource.sshkg]
+    filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}"
+}
+
+data "local_file" "sshpub" {
+    # public key
+    depends_on = [null_resource.sshkg]
+    filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}.pub"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -229,7 +248,7 @@ resource "azurerm_virtual_machine" "bastion" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      key_data = file("/home/kirk/.ssh/id_rsa.pub")
+      key_data = file(data.local_file.sshpub)
       path     = "/home/kirk/.ssh/authorized_keys"
     }
   }  
