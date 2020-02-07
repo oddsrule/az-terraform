@@ -33,9 +33,11 @@ fixed up the ASG
 
 bastion access works - ssh to public IP with password
 next steps:
-- [ ]ssh keys pulling from keyvault in place of passwords
-- [ ]outputs
-- [ ]data disks
-- [ ]vm extensions to bootstrap
+- [x] concat variables in generated names
+- [ ] figure out randomness in generated names in conjunction with a variable string
+- [ ] ssh keys pulling from keyvault in place of passwords
+- [ ] outputs
+- [ ] data disks
+- [ ] vm extensions to bootstrap
 
 when brain works better look at parameterizing everything to try and make naming convention as code????

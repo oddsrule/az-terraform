@@ -12,6 +12,7 @@ variable "landscape" {
 variable "cloud" {
     type        = string
     description = "3 character code for cloud/datacenter"
+    default     = "arm"
 }
 
 variable "region" {

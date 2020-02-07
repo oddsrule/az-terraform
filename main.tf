@@ -79,14 +79,14 @@ resource "azurerm_storage_account" "sa" {
   tags                      = azurerm_resource_group.rg.tags
 }
 
-#resource "azurerm_virtual_network" "vnet" {
-#  name                      = join("-", [azurerm_resource_group.rg.name, var.virtualNetwork1])
-#  location                  = azurerm_resource_group.rg.location
-#  resource_group_name       = azurerm_resource_group.rg.name
-#  address_space             = ["10.0.0.0/16"]
-#  tags                      = azurerm_resource_group.rg.tags
-#}
-#
+resource "azurerm_virtual_network" "vnet" {
+  name                      = "${var.appstring}${var.landscape}${var.cloud}vnt${var.region}000"
+  location                  = azurerm_resource_group.rg.location
+  resource_group_name       = azurerm_resource_group.rg.name
+  address_space             = ["10.0.0.0/16"]
+  tags                      = azurerm_resource_group.rg.tags
+}
+
 #resource "azurerm_subnet" "bastion" {
 #  virtual_network_name = azurerm_virtual_network.vnet.name
 #  name                 = "BastionSubnet"
