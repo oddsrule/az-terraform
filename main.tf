@@ -15,7 +15,7 @@ variable "objectId" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = var.app
+  name     = "${var.appstring}${var.landscape}${var.cloud}rgp${var.region}000"
   location = "westus2"
   tags = {
     environment = var.landscape

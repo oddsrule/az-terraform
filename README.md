@@ -1,7 +1,7 @@
 # az-terraform
-Terraform activities in azure
+##Terraform activities in azure
 
-Getting used to terraform, will be writing code that originated as az cli commands and seeing where I end up.
+###Getting used to terraform, will be writing code that originated as az cli commands and seeing where I end up.
 
 Registering provider with the version parameter works - baby steps
 
@@ -33,9 +33,9 @@ fixed up the ASG
 
 bastion access works - ssh to public IP with password
 next steps:
-ssh keys pulling from keyvault in place of passwords
-outputs
-data disks
-vm extensions to bootstrap
+- [ ]ssh keys pulling from keyvault in place of passwords
+- [ ]outputs
+- [ ]data disks
+- [ ]vm extensions to bootstrap
 
 when brain works better look at parameterizing everything to try and make naming convention as code????
