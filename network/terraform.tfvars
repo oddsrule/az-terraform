@@ -1,0 +1,11 @@
+
+location        = "westus2"
+networkrg       = "kj-terraform-network-rg"
+vnet            = "kj-terraform-vnet"
+bastion_prefix  = "bst"
+bastion_full    = "bastion"
+dmz_prefix      = "dmz"
+web_prefix      = "web"
+database_prefix = "db"
+database_full   = "database"
+landscape       = "dev"
