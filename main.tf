@@ -117,26 +117,26 @@ data "azurerm_virtual_network" "vnet" {
 #  value = "${data.azurerm_virtual_network.vnet.name}"
 #}
 
-data "azurerm_subnet" "bastion-subnet" {
-  name                 = var.bastion-subnet
+data "azurerm_subnet" "bastion_subnet" {
+  name                 = var.bastion_subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
-data "azurerm_subnet" "dmz-subnet" {
-  name                 = var.dmz-subnet
+data "azurerm_subnet" "dmz_subnet" {
+  name                 = var.dmz_subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
-data "azurerm_subnet" "web-subnet" {
-  name                 = var.web-subnet
+data "azurerm_subnet" "web_subnet" {
+  name                 = var.web_subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
-data "azurerm_subnet" "db-subnet" {
-  name                 = var.database-subnet
+data "azurerm_subnet" "db_subnet" {
+  name                 = var.database_subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
@@ -147,22 +147,22 @@ data "azurerm_network_security_group" "nsg" {
 }
 
 data "azurerm_application_security_group" "bastion_asg" {
-  name                = var.bastion-asg
+  name                = var.bastion_asg
   resource_group_name = var.networkrg
 }
 
 data "azurerm_application_security_group" "dmz_asg" {
-  name                = var.dmz-asg
+  name                = var.dmz_asg
   resource_group_name = var.networkrg
 }
 
 data "azurerm_application_security_group" "web_asg" {
-  name                = var.web-asg
+  name                = var.web_asg
   resource_group_name = var.networkrg
 }
 
 data "azurerm_application_security_group" "database_asg" {
-  name                = var.database-nsg
+  name                = var.database_nsg
   resource_group_name = var.networkrg
 }
 
@@ -176,7 +176,7 @@ resource "azurerm_public_ip" "public_ip" {
 }
 
 #data "azurerm_public_ip" "publicip" {
-#  name                = azurerm_public_ip.publicip.name
+#  name                = azurerm_public_ip.public_ip.name
 #  resource_group_name = azurerm_resource_group.computerg.name
 #}
 
@@ -192,7 +192,7 @@ resource "azurerm_network_interface" "bastion_nic" {
 
   ip_configuration {
     name                          = "${var.bastion_prefix}-ipconfig-1"
-    subnet_id                     = data.azurerm_subnet.bastion-subnet.id
+    subnet_id                     = data.azurerm_subnet.bastion_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
