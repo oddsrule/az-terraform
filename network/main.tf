@@ -85,7 +85,7 @@ resource "azurerm_application_security_group" "database_asg" {
 }
 
 resource "azurerm_network_security_rule" "bastioninternet" {
-  name                                       = "${azurerm_network_security_group.nsg.name}-${var.bastion}-nsr"
+  name                                       = "${azurerm_network_security_group.nsg.name}-${var.bastion_prefix}-nsr"
   resource_group_name                        = azurerm_resource_group.network-rg.name
   network_security_group_name                = azurerm_network_security_group.nsg.name
 
@@ -98,5 +98,5 @@ resource "azurerm_network_security_rule" "bastioninternet" {
   source_address_prefix                      = "161.69.123.10/32"
   source_port_range                          = "*"
   destination_port_range                     = "22"
-  destination_application_security_group_ids = [azurerm_application_security_group.bst_asg.id]
+  destination_application_security_group_ids = [azurerm_application_security_group.bastion_asg.id]
 }

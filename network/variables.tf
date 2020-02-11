@@ -34,7 +34,7 @@ variable "web_prefix" {
   default = ""
 }
 
-variable "db_prefix" {
+variable "database_prefix" {
   type    = string
   default = ""
 }
