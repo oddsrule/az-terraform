@@ -87,8 +87,14 @@ resource "azurerm_resource_group" "computerg" {
 #  tags = azurerm_resource_group.rg.tags
 #}
 
+resource "random_string" "storage" {
+  length  = 4
+  upper   = false
+  special = false
+}
+
 resource "azurerm_storage_account" "sa" {
-  name                      = "kjterraformcomputergsta"
+  name                      = "${azurerm_resource_group.computerg.name}${random_string.storage.result}-sta"
   resource_group_name       = azurerm_resource_group.computerg.name
   location                  = azurerm_resource_group.computerg.location
   account_kind              = "StorageV2"
@@ -103,101 +109,101 @@ data "azurerm_virtual_network" "vnet" {
   resource_group_name       = var.networkrg
 }
 
-output "virtual_network_id" {
-  value = "${data.azurerm_virtual_network.vnet.id}"
-}
+#output "virtual_network_id" {
+#  value = "${data.azurerm_virtual_network.vnet.id}"
+#}
 
-output "virtual_network_name" {
-  value = "${data.azurerm_virtual_network.vnet.name}"
-}
+#output "virtual_network_name" {
+#  value = "${data.azurerm_virtual_network.vnet.name}"
+#}
 
 data "azurerm_subnet" "bastion-subnet" {
-  name                 = "bastion-subnet"
+  name                 = var.bastion-subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_subnet" "dmz-subnet" {
-  name                 = "dmz-subnet"
+  name                 = var.dmz-subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_subnet" "web-subnet" {
-  name                 = "web-subnet"
+  name                 = var.web-subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_subnet" "db-subnet" {
-  name                 = "db-subnet"
+  name                 = var.database-subnet
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_network_security_group" "nsg" {
-  name                = "kj-terraform-vnet-nsg"
+  name                = var.network_security_group
   resource_group_name = var.networkrg
 }
 
-data "azurerm_application_security_group" "bstasg" {
-  name                = "${var.networkrg}-bstasg"
+data "azurerm_application_security_group" "bastion_asg" {
+  name                = var.bastion-asg
   resource_group_name = var.networkrg
 }
 
-data "azurerm_application_security_group" "dmzasg" {
-  name                = "${var.networkrg}-dmzasg"
+data "azurerm_application_security_group" "dmz_asg" {
+  name                = var.dmz-asg
   resource_group_name = var.networkrg
 }
 
-data "azurerm_application_security_group" "webasg" {
-  name                = "${var.networkrg}-webasg"
+data "azurerm_application_security_group" "web_asg" {
+  name                = var.web-asg
   resource_group_name = var.networkrg
 }
 
-data "azurerm_application_security_group" "dbasg" {
-  name                = "kj-terraform-network-rg-dbaasg"
+data "azurerm_application_security_group" "database_asg" {
+  name                = var.database-nsg
   resource_group_name = var.networkrg
 }
 
-resource "azurerm_public_ip" "publicip" {
-  name                    = "bastionpublicip"
-  location                = azurerm_resource_group.computerg.location
-  resource_group_name     = azurerm_resource_group.computerg.name
+resource "azurerm_public_ip" "public_ip" {
+  name                    = "bastion-public-ip"
+  location                = var.location
+  resource_group_name     = data.azurerm_resource_group.networkrg.name
   allocation_method       = "Dynamic"
   idle_timeout_in_minutes = 30
-  tags                    = azurerm_resource_group.computerg.tags
+  tags                    = data.azurerm_resource_group.networkrg.tags
 }
 
-data "azurerm_public_ip" "publicip" {
-  name                = azurerm_public_ip.publicip.name
-  resource_group_name = azurerm_resource_group.computerg.name
-}
+#data "azurerm_public_ip" "publicip" {
+#  name                = azurerm_public_ip.publicip.name
+#  resource_group_name = azurerm_resource_group.computerg.name
+#}
 
-resource "random_id" "bastionnic" {
-  byte_length = 8
-}
+#resource "random_id" "bastion_nic" {
+#  byte_length = 8
+#}
 
-resource "azurerm_network_interface" "bastionnic" {
-  name                = random_id.bastionnic.hex
+resource "azurerm_network_interface" "bastion_nic" {
+  name                = "bastion-nic"
   resource_group_name = azurerm_resource_group.computerg.name
   location            = azurerm_resource_group.computerg.location
   tags                = azurerm_resource_group.computerg.tags
 
   ip_configuration {
-    name                          = "ipconfig-1"
+    name                          = "${var.bastion_prefix}-ipconfig-1"
     subnet_id                     = data.azurerm_subnet.bastion-subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.publicip.id
+    public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
 
 }
 
-resource "azurerm_virtual_machine" "bastionserver" {
+resource "azurerm_virtual_machine" "bastion_server" {
   name                             = "bastion"
   location                         = azurerm_resource_group.computerg.location
   resource_group_name              = azurerm_resource_group.computerg.name
-  network_interface_ids            = [azurerm_network_interface.bastionnic.id]
+  network_interface_ids            = [azurerm_network_interface.bastion_nic.id]
   vm_size                          = "Standard_B1ls"
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true

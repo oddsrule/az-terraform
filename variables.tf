@@ -95,3 +95,8 @@ variable "database_prefix" {
   type    = string
   default = ""
 }
+
+variable "network_security_group" {
+  type    = string
+  default = ""
+}
