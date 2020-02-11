@@ -42,6 +42,10 @@ resource "azurerm_resource_group" "computerg" {
   }
 }
 
+data "azurerm_resource_group" "networkrg" {
+  name = var.networkrg
+}
+
 #resource "azurerm_key_vault" "terraform-kv" {
 #  name                        = "${azurerm_resource_group.rg.name}-akv"
 # location                    = azurerm_resource_group.rg.location
@@ -162,7 +166,7 @@ data "azurerm_application_security_group" "web_asg" {
 }
 
 data "azurerm_application_security_group" "database_asg" {
-  name                = var.database_nsg
+  name                = var.database_asg
   resource_group_name = var.networkrg
 }
 
