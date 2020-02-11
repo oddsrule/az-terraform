@@ -2,6 +2,11 @@ variable "tenantId" {
   type    = string
 }
 
+variable "storage_base_name" {
+  type    = string
+  default = ""
+}
+
 variable "objectId" {
   type    = string
 }

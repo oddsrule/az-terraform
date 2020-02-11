@@ -23,7 +23,7 @@ resource "azurerm_virtual_network" "vnet" {
 
 resource "azurerm_subnet" "bst" {
   virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "${azurerm_virtual_network.vnet.name}-${var.bastion_prefix}-subnet"
+  name                 = "${azurerm_virtual_network.vnet.name}-${var.bastion_full}-subnet"
   address_prefix       = "10.0.1.0/24"
   resource_group_name  = azurerm_resource_group.network-rg.name
 }
@@ -44,7 +44,7 @@ resource "azurerm_subnet" "web" {
 
 resource "azurerm_subnet" "db" {
   virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "${azurerm_virtual_network.vnet.name}-${var.database_prefix}-subnet"
+  name                 = "${azurerm_virtual_network.vnet.name}-${var.database_full}-subnet"
   address_prefix       = "10.0.4.0/24"
   resource_group_name  = azurerm_resource_group.network-rg.name
 }

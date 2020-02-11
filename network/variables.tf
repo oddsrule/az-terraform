@@ -38,3 +38,13 @@ variable "database_prefix" {
   type    = string
   default = ""
 }
+
+variable "bastion_full" {
+  type    = string
+  default = ""
+}
+
+variable "database_full" {
+  type    = string
+  default = ""
+}

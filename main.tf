@@ -98,7 +98,7 @@ resource "random_string" "storage" {
 }
 
 resource "azurerm_storage_account" "sa" {
-  name                      = "${azurerm_resource_group.computerg.name}${random_string.storage.result}-sta"
+  name                      = "${var.storage_base_name}${random_string.storage.result}sta"
   resource_group_name       = azurerm_resource_group.computerg.name
   location                  = azurerm_resource_group.computerg.location
   account_kind              = "StorageV2"

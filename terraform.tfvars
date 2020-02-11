@@ -9,7 +9,7 @@ tenantId        = "e54ac728-7164-403b-b708-7de124075fe1"
 bastion_subnet  = "bastion-subnet"
 dmz_subnet      = "dmz-subnet"
 web_subnet      = "web-subnet"
-database_subnet = "db-subnet"
+database_subnet = "database-subnet"
 
 bastion_asg     = "kj-terraform-network-rg-bst-asg" 
 dmz_asg         = "kj-terraform-network-rg-dmz-asg"
@@ -22,3 +22,5 @@ web_prefix = "web"
 database_prefix = "db"
 
 network_security_group = "kj-terraform-vnet-nsg"
+
+storage_base_name = "kjtfcompute"
