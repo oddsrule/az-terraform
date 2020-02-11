@@ -51,7 +51,47 @@ variable "web_subnet" {
   default = ""
 }
 
-variable "db_subnet" {
+variable "database_subnet" {
+  type    = string
+  default = ""
+}
+
+variable "bastion_asg" {
+  type    = string
+  default = ""
+}
+
+variable "dmz_asg" {
+  type    = string
+  default = ""
+}
+
+variable "web_asg" {
+  type    = string
+  default = ""
+}
+
+variable "database_asg" {
+  type    = string
+  default = ""
+}
+
+variable "bastion_prefix" {
+  type    = string
+  default = ""
+}
+
+variable "dmz_prefix" {
+  type    = string
+  default = ""
+}
+
+variable "web_prefix" {
+  type    = string
+  default = ""
+}
+
+variable "database_prefix" {
   type    = string
   default = ""
 }
