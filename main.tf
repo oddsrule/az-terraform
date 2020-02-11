@@ -14,190 +14,164 @@ resource "random_string" "passphrase" {
 }
 
 # Local resource call to generate ssh key
-resource "null_resource" "bastionkg" {
-  provisioner "local-exec" {
-    command = "ssh-keygen -f ${var.file-path}${var.prefix} -t rsa -b 4096 -N ${random_string.passphrase.result}"
-  }
-}
+#resource "null_resource" "bastionkg" {
+#  provisioner "local-exec" {
+#    command = "ssh-keygen -f ${var.file-path}${var.prefix} -t rsa -b 4096 -N ${random_string.passphrase.result}"
+#  }
+#}
 
 # get the ssh key generated above
-data "local_file" "sshpk" {
-    # private key
-    depends_on = [null_resource.bastionkg]
-    filename = "${var.file-path}${var.prefix}"
-}
+#data "local_file" "sshpk" {
+#    # private key
+#    depends_on = [null_resource.bastionkg]
+#    filename = "${var.file-path}${var.prefix}"
+#}
 
-data "local_file" "sshpub" {
-    # public key
-    depends_on = [null_resource.bastionkg]
-    filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}.pub"
-}
+#data "local_file" "sshpub" {
+#    # public key
+#    depends_on = [null_resource.bastionkg]
+#    filename = "${var.file-path}${azurerm_virtual_machine.bastion.name}.pub"
+#}
 
-resource "azurerm_resource_group" "rg" {
-  name     = "${var.appstring}${var.landscape}${var.cloud}rgp${var.region}000"
-  location = "westus2"
+resource "azurerm_resource_group" "computerg" {
+  name     = var.computerg
+  location = var.location
   tags = {
     environment = var.landscape
-    method      = "terraform"
+    method      = "Terraform"
   }
 }
 
-resource "azurerm_key_vault" "terraform-kv" {
-  name                        = "${azurerm_resource_group.rg.name}-akv"
-  location                    = azurerm_resource_group.rg.location
-  resource_group_name         = azurerm_resource_group.rg.name
-  enabled_for_disk_encryption = false
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  
-  sku_name = "standard"
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = var.objectId
-
-    certificate_permissions = [
-      "get",
-      "list",
-    ]
-
-    key_permissions = [
-      "get",
-      "create",
-      "list",
-    ]
-
-    secret_permissions = [
-      "get",
-      "list",
-      "set",
-    ]
-
-    storage_permissions = [
-      "get",
-      "list",
-    ]
-  }
-
-  network_acls {
-    default_action = "Deny"
-    bypass         = "AzureServices"
-  }
-  enabled_for_deployment = true
-
-  tags = azurerm_resource_group.rg.tags
-}
+#resource "azurerm_key_vault" "terraform-kv" {
+#  name                        = "${azurerm_resource_group.rg.name}-akv"
+# location                    = azurerm_resource_group.rg.location
+#  resource_group_name         = azurerm_resource_group.rg.name
+#  enabled_for_disk_encryption = false
+#  tenant_id                   = data.azurerm_client_config.current.tenant_id
+#  
+#  sku_name = "standard"
+#
+#  access_policy {
+#    tenant_id = data.azurerm_client_config.current.tenant_id
+#    object_id = var.objectId
+#
+#    certificate_permissions = [
+#      "get",
+#      "list",
+#    ]
+#
+#    key_permissions = [
+#      "get",
+#      "create",
+#      "list",
+#    ]
+#
+#    secret_permissions = [
+#      "get",
+#      "list",
+#      "set",
+#    ]
+#
+#    storage_permissions = [
+#      "get",
+#      "list",
+#    ]
+#  }
+#
+#  network_acls {
+#    default_action = "Deny"
+#    bypass         = "AzureServices"
+#  }
+#  enabled_for_deployment = true
+#
+#  tags = azurerm_resource_group.rg.tags
+#}
 
 resource "azurerm_storage_account" "sa" {
-  name                      = "${azurerm_resource_group.rg.name}sta"
-  resource_group_name       = azurerm_resource_group.rg.name
-  location                  = azurerm_resource_group.rg.location
+  name                      = "kjterraformcomputergsta"
+  resource_group_name       = azurerm_resource_group.computerg.name
+  location                  = azurerm_resource_group.computerg.location
   account_kind              = "StorageV2"
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   enable_https_traffic_only = true
-  tags                      = azurerm_resource_group.rg.tags
+  tags                      = azurerm_resource_group.computerg.tags
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                      = "${var.appstring}${var.landscape}${var.cloud}vnt${var.region}000"
-  location                  = azurerm_resource_group.rg.location
-  resource_group_name       = azurerm_resource_group.rg.name
-  address_space             = ["10.0.0.0/16"]
-  tags                      = azurerm_resource_group.rg.tags
+data "azurerm_virtual_network" "vnet" {
+  name                      = var.vnet
+  resource_group_name       = var.networkrg
 }
 
-resource "azurerm_subnet" "bastion" {
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}001"
-  address_prefix       = "10.0.1.0/24"
-  resource_group_name  = azurerm_resource_group.rg.name
+output "virtual_network_id" {
+  value = "${data.azurerm_virtual_network.vnet.id}"
 }
 
-resource "azurerm_subnet" "dmz" {
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}002"
-  address_prefix       = "10.0.2.0/24"
-  resource_group_name  = azurerm_resource_group.rg.name
+output "virtual_network_name" {
+  value = "${data.azurerm_virtual_network.vnet.name}"
 }
 
-resource "azurerm_subnet" "web" {
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}003"
-  address_prefix       = "10.0.3.0/24"
-  resource_group_name  = azurerm_resource_group.rg.name
+data "azurerm_subnet" "bastion-subnet" {
+  name                 = "bastion-subnet"
+  virtual_network_name = var.vnet
+  resource_group_name  = var.networkrg
 }
 
-resource "azurerm_subnet" "db" {
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "${var.appstring}${var.landscape}${var.cloud}snt${var.region}004"
-  address_prefix       = "10.0.4.0/24"
-  resource_group_name  = azurerm_resource_group.rg.name
+data "azurerm_subnet" "dmz-subnet" {
+  name                 = "dmz-subnet"
+  virtual_network_name = var.vnet
+  resource_group_name  = var.networkrg
 }
 
-resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.appstring}${var.landscape}${var.cloud}nsg${var.region}000"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = azurerm_resource_group.rg.tags
+data "azurerm_subnet" "web-subnet" {
+  name                 = "web-subnet"
+  virtual_network_name = var.vnet
+  resource_group_name  = var.networkrg
 }
 
-resource "azurerm_application_security_group" "bstasg" {
-  name                = "${azurerm_resource_group.rg.name}-bstasg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = azurerm_resource_group.rg.tags
+data "azurerm_subnet" "db-subnet" {
+  name                 = "db-subnet"
+  virtual_network_name = var.vnet
+  resource_group_name  = var.networkrg
 }
 
-resource "azurerm_application_security_group" "dmzasg" {
-  name                = "${azurerm_resource_group.rg.name}-dmzasg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = azurerm_resource_group.rg.tags
+data "azurerm_network_security_group" "nsg" {
+  name                = "kj-terraform-vnet-nsg"
+  resource_group_name = var.networkrg
 }
 
-resource "azurerm_application_security_group" "webasg" {
-  name                = "${azurerm_resource_group.rg.name}-webasg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = azurerm_resource_group.rg.tags
+data "azurerm_application_security_group" "bstasg" {
+  name                = "${var.networkrg}-bstasg"
+  resource_group_name = var.networkrg
 }
 
-resource "azurerm_application_security_group" "dbaasg" {
-  name                = "${azurerm_resource_group.rg.name}-dbaasg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  tags                = azurerm_resource_group.rg.tags
+data "azurerm_application_security_group" "dmzasg" {
+  name                = "${var.networkrg}-dmzasg"
+  resource_group_name = var.networkrg
 }
 
-resource "azurerm_network_security_rule" "bastioninternet" {
-  name                                       = "bastion-inbound-ssh"
-  resource_group_name                        = azurerm_resource_group.rg.name
-  network_security_group_name                = azurerm_network_security_group.nsg.name
-
-  protocol                                   = "Tcp"
-  access                                     = "Allow"
-  direction                                  = "Inbound"
-
-  priority                                   = 100
-  description                                = "Allow ssh from shaw to bastion subnet"
-  source_address_prefix                      = "184.75.215.242/32"
-  source_port_range                          = "*"
-  destination_port_range                     = "22"
-  destination_application_security_group_ids = [azurerm_application_security_group.bstasg.id]
+data "azurerm_application_security_group" "webasg" {
+  name                = "${var.networkrg}-webasg"
+  resource_group_name = var.networkrg
 }
 
-resource "azurerm_public_ip" "bastionpublicip" {
+data "azurerm_application_security_group" "dbasg" {
+  name                = "kj-terraform-network-rg-dbaasg"
+  resource_group_name = var.networkrg
+}
+
+resource "azurerm_public_ip" "publicip" {
   name                    = "bastionpublicip"
-  location                = azurerm_resource_group.rg.location
-  resource_group_name     = azurerm_resource_group.rg.name
+  location                = azurerm_resource_group.computerg.location
+  resource_group_name     = azurerm_resource_group.computerg.name
   allocation_method       = "Dynamic"
   idle_timeout_in_minutes = 30
-  tags                    = azurerm_resource_group.rg.tags
+  tags                    = azurerm_resource_group.computerg.tags
 }
 
-data "azurerm_public_ip" "bastionpublicip" {
-  name                = azurerm_public_ip.bastionpublicip.name
-  resource_group_name = azurerm_resource_group.rg.name
+data "azurerm_public_ip" "publicip" {
+  name                = azurerm_public_ip.publicip.name
+  resource_group_name = azurerm_resource_group.computerg.name
 }
 
 resource "random_id" "bastionnic" {
@@ -206,23 +180,23 @@ resource "random_id" "bastionnic" {
 
 resource "azurerm_network_interface" "bastionnic" {
   name                = random_id.bastionnic.hex
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  tags                = azurerm_resource_group.rg.tags
+  resource_group_name = azurerm_resource_group.computerg.name
+  location            = azurerm_resource_group.computerg.location
+  tags                = azurerm_resource_group.computerg.tags
 
   ip_configuration {
     name                          = "ipconfig-1"
-    subnet_id                     = azurerm_subnet.bastion.id
+    subnet_id                     = data.azurerm_subnet.bastion-subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.bastionpublicip.id
+    public_ip_address_id          = azurerm_public_ip.publicip.id
   }
 
 }
 
-resource "azurerm_virtual_machine" "bastion" {
-  name                             = "dmz${var.landscape}000z"
-  location                         = azurerm_resource_group.rg.location
-  resource_group_name              = azurerm_resource_group.rg.name
+resource "azurerm_virtual_machine" "bastionserver" {
+  name                             = "bastion"
+  location                         = azurerm_resource_group.computerg.location
+  resource_group_name              = azurerm_resource_group.computerg.name
   network_interface_ids            = [azurerm_network_interface.bastionnic.id]
   vm_size                          = "Standard_B1ls"
   delete_os_disk_on_termination    = true
@@ -236,23 +210,24 @@ resource "azurerm_virtual_machine" "bastion" {
   }
 
   storage_os_disk {
-    name          = "dmz${var.landscape}000zosDisk"
+    name          = "bastionOsDisk"
     create_option = "FromImage"
   }
 
   os_profile {
-    computer_name   = "dmz${var.landscape}000z"
-    admin_username  = "kirk"
+    computer_name  = "bastion"
+    admin_username = "kirk"
+    admin_password = "str0ngP2ssword!"
   }
 
   os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      key_data = file(data.local_file.sshpub)
-      path     = "/home/kirk/.ssh/authorized_keys"
-    }
+    disable_password_authentication = false
+#    ssh_keys {
+#      key_data = file(data.local_file.sshpub)
+#      path     = "/home/kirk/.ssh/authorized_keys"
+#    }
   }  
-  tags = azurerm_resource_group.rg.tags
+  tags = azurerm_resource_group.computerg.tags
 }
 
 #resource "azurerm_network_interface" "dmznic" {

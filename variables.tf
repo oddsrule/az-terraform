@@ -1,26 +1,3 @@
-variable "appstring" {
-    type        = string
-    description = "3 character code for application"
-}
-
-variable "landscape" {
-    type        = string
-    description = "3 character code for landscape - one of sbx/dev/qut/prd"
-    default     = "sbx"
-}
-
-variable "cloud" {
-    type        = string
-    description = "3 character code for cloud/datacenter"
-    default     = "arm"
-}
-
-variable "region" {
-    type        = string
-    description = "3 character code for cloud region"
-    default     = "uw2"
-}
-
 variable "tenantId" {
   type    = string
 }
@@ -34,7 +11,47 @@ variable "file-path" {
   default = "~/.keys"
 }
 
-variable "prefix" {
+variable "location" {
   type    = string
-  default = "bastion"
+  default = ""
+}
+
+variable "networkrg" {
+  type    = string
+  default = ""
+}
+
+variable "vnet" {
+  type    = string
+  default = ""
+}
+
+variable "computerg" {
+  type    = string
+  default = ""
+}
+
+variable "landscape" {
+  type    = string
+  default = ""
+}
+
+variable "bastion_subnet" {
+  type    = string
+  default = ""
+}
+
+variable "dmz_subnet" {
+  type    = string
+  default = ""
+}
+
+variable "web_subnet" {
+  type    = string
+  default = ""
+}
+
+variable "db_subnet" {
+  type    = string
+  default = ""
 }
