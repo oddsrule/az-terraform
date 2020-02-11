@@ -9,42 +9,42 @@ resource "azurerm_resource_group" "network-rg" {
   name     = var.networkrg
   location = var.location
   tags     = {
-    Environment = "Dev"
+    Environment = var.landscape
     Method      = "Terraform"
   }
 }
 resource "azurerm_virtual_network" "vnet" {
   name                      = var.vnet
-  location                  = azurerm_resource_group.network-rg.location
+  location                  = var.location
   resource_group_name       = azurerm_resource_group.network-rg.name
   address_space             = ["10.0.0.0/16"]
   tags                      = azurerm_resource_group.network-rg.tags
 }
 
-resource "azurerm_subnet" "bastion" {
+resource "azurerm_subnet" "bst" {
   virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "bastion-subnet"
+  name                 = "${azurerm_virtual_network.vnet.name}-${var.bastion_prefix}-subnet"
   address_prefix       = "10.0.1.0/24"
   resource_group_name  = azurerm_resource_group.network-rg.name
 }
 
 resource "azurerm_subnet" "dmz" {
   virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "dmz-subnet"
+  name                 = "${azurerm_virtual_network.vnet.name}-${var.dmz_prefix}-subnet"
   address_prefix       = "10.0.2.0/24"
   resource_group_name  = azurerm_resource_group.network-rg.name
 }
 
 resource "azurerm_subnet" "web" {
   virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "web-subnet"
+  name                 = "${azurerm_virtual_network.vnet.name}-${var.web_prefix}-subnet"
   address_prefix       = "10.0.3.0/24"
   resource_group_name  = azurerm_resource_group.network-rg.name
 }
 
 resource "azurerm_subnet" "db" {
   virtual_network_name = azurerm_virtual_network.vnet.name
-  name                 = "db-subnet"
+  name                 = "${azurerm_virtual_network.vnet.name}-${var.database_prefix}-subnet"
   address_prefix       = "10.0.4.0/24"
   resource_group_name  = azurerm_resource_group.network-rg.name
 }
@@ -56,36 +56,36 @@ resource "azurerm_network_security_group" "nsg" {
   tags                = azurerm_resource_group.network-rg.tags
 }
 
-resource "azurerm_application_security_group" "bstasg" {
-  name                = "${azurerm_resource_group.network-rg.name}-bstasg"
+resource "azurerm_application_security_group" "bastion_asg" {
+  name                = "${azurerm_resource_group.network-rg.name}-${var.bastion_prefix}-asg"
   location            = azurerm_resource_group.network-rg.location
   resource_group_name = azurerm_resource_group.network-rg.name
   tags                = azurerm_resource_group.network-rg.tags
 }
 
-resource "azurerm_application_security_group" "dmzasg" {
-  name                = "${azurerm_resource_group.network-rg.name}-dmzasg"
+resource "azurerm_application_security_group" "dmz_asg" {
+  name                = "${azurerm_resource_group.network-rg.name}-${var.dmz_prefix}-asg"
   location            = azurerm_resource_group.network-rg.location
   resource_group_name = azurerm_resource_group.network-rg.name
   tags                = azurerm_resource_group.network-rg.tags
 }
 
-resource "azurerm_application_security_group" "webasg" {
-  name                = "${azurerm_resource_group.network-rg.name}-webasg"
+resource "azurerm_application_security_group" "web_asg" {
+  name                = "${azurerm_resource_group.network-rg.name}-${var.web_prefix}-asg"
   location            = azurerm_resource_group.network-rg.location
   resource_group_name = azurerm_resource_group.network-rg.name
   tags                = azurerm_resource_group.network-rg.tags
 }
 
-resource "azurerm_application_security_group" "dbaasg" {
-  name                = "${azurerm_resource_group.network-rg.name}-dbaasg"
+resource "azurerm_application_security_group" "database_asg" {
+  name                = "${azurerm_resource_group.network-rg.name}-${var.database_prefix}-asg"
   location            = azurerm_resource_group.network-rg.location
   resource_group_name = azurerm_resource_group.network-rg.name
   tags                = azurerm_resource_group.network-rg.tags
 }
 
 resource "azurerm_network_security_rule" "bastioninternet" {
-  name                                       = "bastion-inbound-ssh"
+  name                                       = "${azurerm_network_security_group.nsg.name}-${var.bastion}-nsr"
   resource_group_name                        = azurerm_resource_group.network-rg.name
   network_security_group_name                = azurerm_network_security_group.nsg.name
 
@@ -95,8 +95,8 @@ resource "azurerm_network_security_rule" "bastioninternet" {
 
   priority                                   = 100
   description                                = "Allow ssh from shaw to bastion subnet"
-  source_address_prefix                      = "184.75.215.242/32"
+  source_address_prefix                      = "161.69.123.10/32"
   source_port_range                          = "*"
   destination_port_range                     = "22"
-  destination_application_security_group_ids = [azurerm_application_security_group.bstasg.id]
+  destination_application_security_group_ids = [azurerm_application_security_group.bst_asg.id]
 }
