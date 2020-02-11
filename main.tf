@@ -122,25 +122,25 @@ data "azurerm_virtual_network" "vnet" {
 #}
 
 data "azurerm_subnet" "bastion_subnet" {
-  name                 = var.bastion_subnet
+  name                 = "${var.vnet}-${var.bastion_subnet}"
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_subnet" "dmz_subnet" {
-  name                 = var.dmz_subnet
+  name                 = "${var.vnet}-${var.dmz_subnet}"
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_subnet" "web_subnet" {
-  name                 = var.web_subnet
+  name                 = "${var.vnet}-${var.web_subnet}"
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
 
 data "azurerm_subnet" "db_subnet" {
-  name                 = var.database_subnet
+  name                 = "${var.vnet}-${var.database_subnet}"
   virtual_network_name = var.vnet
   resource_group_name  = var.networkrg
 }
