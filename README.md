@@ -39,5 +39,6 @@ next steps:
 - [ ] outputs
 - [ ] data disks
 - [ ] vm extensions to bootstrap
+- [ ] modules
 
 when brain works better look at parameterizing everything to try and make naming convention as code????
