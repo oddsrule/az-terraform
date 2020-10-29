@@ -1,3 +1,4 @@
+<img src="https://aka.ms/deploytoazurebutton"/>
 # az-terraform
 ## Terraform activities in azure
 
